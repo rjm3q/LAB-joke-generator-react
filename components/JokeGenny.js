@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import getJoke from '../api/jokeData';
-import PropTypes from 'prop-types';
 
-export default function JokeGenny ({joke, btnText}) {
+
+const JokeGenny= () => {
+  const [currentJoke, setCurrentJoke] = useState('');
+
+  const generateJoke = async () => {
+    try {
+      const response = await fetch({getJoke});
+      const data = await response.json();
+      setCurrentJoke(`${data.setup} ${data.punchline}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
-      <h1>{joke.setup}</h1>
-      <p>{btnText !== 'Get Punchline' ? joke.punchline : ''}</p>
+      <h1>Joke Generator</h1>
+      <button onClick={generateJoke}>Generate Joke</button>
+      {currentJoke && <p>{currentJoke}</p>}
     </>
   );
-}
-
-JokeGenny.propTypes = {
-  joke:PropTypes.shape({
-    setup: PropTypes.string,
-    punchline: PropTypes.string,
-  }).isRequired,
-  btnText: PropTypes.string.isRequired,
 };
+
+export default JokeGenny;
